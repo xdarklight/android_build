@@ -79,6 +79,13 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Specifies the number of worker-threads that will be used when
       generating patches for incremental updates (defaults to 3).
 
+  -f  (--verbatim_files) <string>
+      A (comma-separated) list of file-paths (which have to start with the
+      mount-point name, for example "system", but must not start with a
+      leading slash) which will not be "patched". Instead those files will
+      always be copied (no matter what the state of the file on the device
+      is). Note: This will increase the size of the patches.
+
 """
 
 import sys
@@ -1419,12 +1426,14 @@ def main(argv):
       OPTIONS.updater_binary = a
     elif o in ("--no_fallback_to_full",):
       OPTIONS.fallback_to_full = False
+    elif o in ("-f", "--verbatim_files"):
+      OPTIONS.require_verbatim = set(a.split(","))
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:t:a:2o:",
+                             extra_opts="b:k:i:d:wne:t:a:2o:f",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
@@ -1440,6 +1449,7 @@ def main(argv):
                                               "oem_settings=",
                                               "verify",
                                               "no_fallback_to_full",
+                                              "verbatim_files=",
                                               ],
                              extra_option_handler=option_handler)
 
