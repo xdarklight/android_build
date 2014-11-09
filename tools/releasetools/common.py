@@ -859,11 +859,24 @@ class DeviceSpecificParams(object):
     used to install the image for the device's baseband processor."""
     return self._DoCall("FullOTA_InstallEnd")
 
+  def FullOTA_DisableBootImageInstallation(self):
+    """Called to check if the boot image installation should be skipped
+    (which is useful for devices with a locked bootloader)."""
+    return self._DoCall("FullOTA_DisableBootImageInstallation", [ None ], default=False)
+
   def IncrementalOTA_Assertions(self):
     """Called after emitting the block of assertions at the top of an
     incremental OTA package.  Implementations can add whatever
     additional assertions they like."""
     return self._DoCall("IncrementalOTA_Assertions")
+
+  def FullOTA_FormatSystemPartition(self):
+    """Called to indicate that the /system partition should now be
+    formatted. A custom formatting routine cam be implemented here (in
+    this case FullOTA_FormatSystemPartition should return True which
+    indicates that formatting will be skipped as it was already done
+    by this hook)."""
+    return self._DoCall("FullOTA_FormatSystemPartition")
 
   def IncrementalOTA_VerifyBegin(self):
     """Called at the start of the verification phase of incremental
@@ -1110,7 +1123,7 @@ DataImage = blockimgdiff.DataImage
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
                     "ext4": "EMMC", "emmc": "EMMC",
-                    "f2fs": "EMMC" }
+                    "f2fs": "EMMC", "ext3": "EMMC" }
 
 def GetTypeAndDevice(mount_point, info):
   fstab = info["fstab"]
