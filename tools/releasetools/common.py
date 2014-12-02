@@ -874,6 +874,12 @@ class DeviceSpecificParams(object):
     (which is useful for devices with a locked bootloader)."""
     return self._DoCall("FullOTA_DisableBootImageInstallation", [ None ], default=False)
 
+  def FullOTA_PostValidate(self):
+    """Called after installing and validating /system; typically this is
+    used to resize the system partition after a block based installation."""
+    return self._DoCall("FullOTA_PostValidate")
+
+
   def IncrementalOTA_Assertions(self):
     """Called after emitting the block of assertions at the top of an
     incremental OTA package.  Implementations can add whatever
@@ -1133,7 +1139,10 @@ DataImage = blockimgdiff.DataImage
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
                     "ext4": "EMMC", "emmc": "EMMC",
-                    "f2fs": "EMMC", "ext3": "EMMC" }
+                    "f2fs": "EMMC",
+                    "ext2": "EMMC",
+                    "ext3": "EMMC",
+                    "vfat": "EMMC" }
 
 def GetTypeAndDevice(mount_point, info):
   fstab = info["fstab"]
