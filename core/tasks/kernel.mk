@@ -142,7 +142,11 @@ ifeq ($(TARGET_ARCH),arm)
       # Check that the executable is here.
       ccache := $(strip $(wildcard $(ccache)))
     endif
+    ifneq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),)
+    ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(TARGET_KERNEL_CUSTOM_TOOLCHAIN)"
+    else
     ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(KERNEL_TOOLCHAIN)/$(KERNEL_TOOLCHAIN_PREFIX)"
+    endif
     ccache = 
 endif
 
